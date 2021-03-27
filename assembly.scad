@@ -1,4 +1,7 @@
 // adapted from variable_fan_adapter by Sherif Eid
+use <scad-utils/transformations.scad>
+use <scad-utils/shapes.scad>
+use <list-comprehension-demos/skin.scad>
 
 // all units in mm
 
@@ -69,20 +72,32 @@ module louver() {
     }
 }
 
+
+module horn(fn=30,r1=fan_diameter/2,r2=influx_diameter/2,R = fan_diameter/2)
+{
+    skin([for(f=[0:1/fn:1]) 
+        transform(rotation([0,90*f,0])*translation([-R,0,0]), 
+            circle(r1+(r2-r1)*(1-(1-f)*(1-f))))]);
+    rotate([0,90,0]) translate([-R,0,0]) cylinder(r=r2, h=influx_length);
+}
+
+
 // influx plate and cone
 difference() {
     union() {
         rotate([0,0,45]){ fan_plate(); }
-        cylinder(h=cone_height, d1=fan_diameter, d2=influx_diameter);
+        rotate([0,0,90]) translate([fan_diameter/2,0,0]) horn();
+        // cylinder(h=cone_height, d1=fan_diameter, d2=influx_diameter);
     }
-    cylinder(h=cone_height, d1=fan_diameter-2*wall_thickness, d2=influx_diameter-wall_thickness*2);
+    // cylinder(h=cone_height, d1=fan_diameter-2*wall_thickness, d2=influx_diameter-wall_thickness*2);
+    rotate([0,0,90]) translate([fan_diameter/2,0,0]) horn(r1=fan_diameter/2-wall_thickness, r2=influx_diameter/2-wall_thickness);
 }
 
-// influx tube
-translate([0,0,cone_height]) difference() {
-    cylinder(h=influx_length, d=influx_diameter);
-    cylinder(h=influx_length, d=influx_diameter-2*wall_thickness);
-}
+// // influx tube
+// translate([0,0,cone_height]) difference() {
+//     cylinder(h=influx_length, d=influx_diameter);
+//     cylinder(h=influx_length, d=influx_diameter-2*wall_thickness);
+// }
 
 mirror([0,0,1]) union() {
     // fan box
@@ -149,15 +164,25 @@ mirror([0,0,1]) union() {
                 }
 
             }
+            // screw shields, inner
             translate([0,0,wall_thickness]) each_corner(outflow_screw_spread/2) {
-                cylinder(r=fan_screw_diameter*2, h=border_height*2);
+                union() {
+                    cylinder(r=fan_screw_diameter*2, h=border_height*2);
+                    b=50;
+                    rotate([0,0,45]) translate([0,b/-2,0]) cube([b,b,b]);
+                }
             }
         }        
     }
 }
 
 
+
+// https://stackoverflow.com/questions/28842419/linear-rotational-extrude-at-the-same-time 
+
+
 // lexan/plexi 40in x 8in
 // cut in half
 // 2 pairs of plates to join them
+
 
