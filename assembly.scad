@@ -61,7 +61,7 @@ module fan_plate(fd=fan_diameter, fss=fan_screw_spread) {
 // influx plate and cone
 difference() {
     union() {
-        fan_plate();
+        rotate([0,0,45]){ fan_plate(); }
         cylinder(h=cone_height, d1=fan_diameter, d2=influx_diameter);
     }
     cylinder(h=cone_height, d1=fan_diameter-2*wall_thickness, d2=influx_diameter-wall_thickness*2);
@@ -75,36 +75,37 @@ translate([0,0,cone_height]) difference() {
 
 mirror([0,0,1]) union() {
     // fan box
-    translate([0,0,-1*wall_thickness]) {
-        fan_box_length = wall_thickness*2 + fan_thickness;
-        difference() {
-            linear_extrude(height=fan_box_length){
-                minkowski() {
-                    square(fan_diameter, center=true);
-                    circle(r=wall_thickness);
+    rotate([0, 0, 45]) {
+        translate([0,0,-1*wall_thickness]) {
+            fan_box_length = wall_thickness*2 + fan_thickness;
+            difference() {
+                linear_extrude(height=fan_box_length){
+                    minkowski() {
+                        square(fan_diameter, center=true);
+                        circle(r=wall_thickness);
+                    }
                 }
-            }
-            linear_extrude(height=fan_box_length){
-                // roundrect(fan_diameter);
-                square(fan_diameter, center=true);
-            }
-            translate([fan_diameter/-2,0,wall_thickness]) {
-                cube([fan_diameter, fan_diameter, fan_thickness]);
+                linear_extrude(height=fan_box_length){
+                    // roundrect(fan_diameter);
+                    square(fan_diameter, center=true);
+                }
+                translate([fan_diameter/-2,0,wall_thickness]) {
+                    cube([fan_diameter, fan_diameter, fan_thickness]);
+                }
+
             }
 
-        }
-
-    }    
+        }    
+    }
+    
 
     // outflow plate and shroud
     translate([0,0,fan_thickness]) difference() {
         shroud_length = wall_thickness + outflow_length;
         union() {
-            fan_plate();
+            rotate([0, 0, 45]) { fan_plate(); }
             translate([0,0,wall_thickness+outflow_length-wall_thickness]) {
-                rotate([0, 0, 45]) {
-                    fan_plate(outflow_diameter, outflow_screw_diameter);            
-                }
+                fan_plate(outflow_diameter, outflow_screw_diameter);            
             }
             cylinder(h=shroud_length, d1=fan_diameter, d2=outflow_diameter);
         }
@@ -112,15 +113,8 @@ mirror([0,0,1]) union() {
     }
 }
 
-// TODO: find exact measurements of fan 26mm thick
-// TODO: stabilizing bottom plate and fins.
-
-// new thought
-// - make outflow basically zero
-// - but window plate bigger to access screws
-// - and countersink fan screw holes
-// - and design anti-rain blinds as separate part
-// - and a slight cone to the window interface
-// - and make sure i've got enough plexi
 
 // lexan/plexi 40in x 8in
+// cut in half
+// 2 pairs of plates to join them
+
