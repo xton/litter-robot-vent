@@ -16,13 +16,12 @@ fan_screw_diameter = 4.3;
 
 outflow_length = wall_thickness;
 outflow_diameter = 130;
-outflow_screw_diameter = 115;
+outflow_screw_spread = 115;
 
-// internal parameters
-// pipe reduction ratio relative to fan 1 diameter
-n_pipe = 1;
-// angle factor
-n_angle = 0.501;
+window_offset = 10;
+louver_thickness = 3;
+louver_length = 30;
+louver_spacing = 20;
 
 // other advanced variables
 // used to control the resolution of all arcs 
@@ -39,9 +38,9 @@ module roundrect(d) {
 
 module each_corner(d) {
     translate([d,d,0]) children(0);
-    translate([-1*d,d,0]) children(0);
-    translate([d,-1*d,0]) children(0);
-    translate([-1*d,-1*d,0]) children(0);
+    rotate([0,0,90]) translate([d,d,0]) children(0);
+    rotate([0,0,180]) translate([d,d,0]) children(0);
+    rotate([0,0,270]) translate([d,d,0]) children(0);
 }
 
 module fan_plate(fd=fan_diameter, fss=fan_screw_spread) {
@@ -54,6 +53,18 @@ module fan_plate(fd=fan_diameter, fss=fan_screw_spread) {
         }
         each_corner(fss/2) {
             cylinder(d=fan_screw_diameter, h=wall_thickness);
+        }
+    }
+}
+
+// origin is center-x
+module louver() {
+    translate([outflow_diameter/-2,0,0])  {
+        difference() {
+            rotate([40, 0, 0]) {
+                translate([0,-1*louver_length,0]) cube([outflow_diameter, louver_length*2, louver_thickness]);
+            }
+            mirror([0,0,1]) translate([0,outflow_diameter/-2,0])  cube(outflow_diameter);
         }
     }
 }
@@ -89,7 +100,7 @@ mirror([0,0,1]) union() {
                     // roundrect(fan_diameter);
                     square(fan_diameter, center=true);
                 }
-                translate([fan_diameter/-2,0,wall_thickness]) {
+                translate([fan_diameter/-2,fan_diameter*-1,wall_thickness]) {
                     cube([fan_diameter, fan_diameter, fan_thickness]);
                 }
 
@@ -105,11 +116,43 @@ mirror([0,0,1]) union() {
         union() {
             rotate([0, 0, 45]) { fan_plate(); }
             translate([0,0,wall_thickness+outflow_length-wall_thickness]) {
-                fan_plate(outflow_diameter, outflow_screw_diameter);            
+                fan_plate(outflow_diameter, outflow_screw_spread);            
             }
             cylinder(h=shroud_length, d1=fan_diameter, d2=outflow_diameter);
         }
         cylinder(h=shroud_length, d1=fan_diameter-2*wall_thickness, d2=outflow_diameter-2*wall_thickness);
+    }
+
+    // outer plate and louver
+    translate([0,0,fan_thickness+wall_thickness+outflow_length+window_offset]) {
+        // main louver
+        border_height = louver_length/1.5;
+        difference() {
+            union() {
+                // outer plate with hole
+                difference() {
+                    fan_plate(outflow_diameter, outflow_screw_spread);            
+                    cylinder(h=wall_thickness, d1=outflow_diameter-2*wall_thickness, d2=outflow_diameter);
+                }
+
+                // louver fins
+                for(n=[outflow_diameter/-2:louver_spacing:outflow_diameter/2-louver_spacing]) {
+                    translate([0,n,0]) louver();
+                }
+                // borders on each side
+                translate([outflow_diameter/-2, outflow_diameter/-2, 0]) cube([louver_thickness,outflow_diameter,border_height]);
+                translate([outflow_diameter/2-louver_thickness, outflow_diameter/-2, 0]) cube([louver_thickness,outflow_diameter,border_height]);
+
+                // screw shields, outer
+                translate([0,0,wall_thickness]) each_corner(outflow_screw_spread/2) {
+                    cylinder(r=fan_screw_diameter*2+louver_thickness, h=border_height-wall_thickness);
+                }
+
+            }
+            translate([0,0,wall_thickness]) each_corner(outflow_screw_spread/2) {
+                cylinder(r=fan_screw_diameter*2, h=border_height*2);
+            }
+        }        
     }
 }
 
