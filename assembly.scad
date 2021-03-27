@@ -82,22 +82,14 @@ module horn(fn=30,r1=fan_diameter/2,r2=influx_diameter/2,R = fan_diameter/2)
 }
 
 
-// influx plate and cone
+// influx plate and horn
 difference() {
     union() {
         rotate([0,0,45]){ fan_plate(); }
         rotate([0,0,90]) translate([fan_diameter/2,0,0]) horn();
-        // cylinder(h=cone_height, d1=fan_diameter, d2=influx_diameter);
     }
-    // cylinder(h=cone_height, d1=fan_diameter-2*wall_thickness, d2=influx_diameter-wall_thickness*2);
     rotate([0,0,90]) translate([fan_diameter/2,0,0]) horn(r1=fan_diameter/2-wall_thickness, r2=influx_diameter/2-wall_thickness);
 }
-
-// // influx tube
-// translate([0,0,cone_height]) difference() {
-//     cylinder(h=influx_length, d=influx_diameter);
-//     cylinder(h=influx_length, d=influx_diameter-2*wall_thickness);
-// }
 
 mirror([0,0,1]) union() {
     // fan box
