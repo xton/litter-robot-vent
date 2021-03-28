@@ -196,10 +196,38 @@ translate([0,0,-1*(fan_thickness+wall_thickness*2+window_offset/2)]) {
         # each_corner(outflow_screw_spread/2){
             circle(d=fan_screw_diameter);
         }
+
+        translate([window_width/-4, window_v_offset*-1 + window_height/2 - joiner_height/2]) circle(d=fan_screw_diameter);
+        translate([window_width/4, window_v_offset*-1 + window_height/2 - joiner_height/2]) circle(d=fan_screw_diameter);
     }
     // window top half
-    translate([window_width/-2,window_v_offset*-1+window_height/2,0]) {
-        square(size=[window_width, window_height/2]);
+    translate([0,2,0]) {
+        difference() {
+            translate([window_width/-2,window_v_offset*-1+window_height/2,0]) {
+                square(size=[window_width, window_height/2]);
+            }
+            translate([window_width/-4, window_v_offset*-1 + window_height/2 + joiner_height/2]) circle(d=fan_screw_diameter);
+            translate([window_width/4, window_v_offset*-1 + window_height/2 + joiner_height/2]) circle(d=fan_screw_diameter);
+        }
+    }
+
+    // joiners
+    rotate([0, 0, -90]) {
+        translate([window_width/2+joiner_r+2,joiner_height/-2,0]) {
+            for(off=[0:joiner_r*2+2:joiner_r*2+2]) {
+                translate([off,0,0]) {
+                    // the actual joiner objects:
+                    difference() {
+                        hull() {
+                            circle(r=joiner_r);
+                            translate([0,joiner_height,0]) circle(r=joiner_r);
+                        }
+                        circle(r=fan_screw_diameter/2);
+                        translate([0,joiner_height,0]) circle(r=fan_screw_diameter/2);
+                    }                
+                }
+            }
+        }
     }
 }
 
