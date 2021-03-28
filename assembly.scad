@@ -176,5 +176,30 @@ mirror([0,0,1]) union() {
 // lexan/plexi 40in x 8in
 // cut in half
 // 2 pairs of plates to join them
+inch = 25.4;
 
+window_width = 8*inch;
+window_height = 40*inch;
+joiner_height = 4*inch;
+joiner_r = 1/2*inch;
+window_v_offset = 100;
+
+
+    
+translate([0,0,-1*(fan_thickness+wall_thickness*2+window_offset/2)]) {
+    // window-bottom half
+    difference() {
+        translate([window_width/-2,window_v_offset*-1,0]) {
+            square(size=[window_width, window_height/2]);
+        }
+        # circle(d=fan_diameter-wall_thickness*2);
+        # each_corner(outflow_screw_spread/2){
+            circle(d=fan_screw_diameter);
+        }
+    }
+    // window top half
+    translate([window_width/-2,window_v_offset*-1+window_height/2,0]) {
+        square(size=[window_width, window_height/2]);
+    }
+}
 
