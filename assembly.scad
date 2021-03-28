@@ -10,7 +10,7 @@ wall_thickness = 4;
 // diameter of narrow part of funnel.
 influx_diameter = 33;
 influx_length = 30;
-cone_height = 60;
+horn_height = 75;
 
 fan_diameter = 120;
 fan_thickness = 26;
@@ -73,12 +73,12 @@ module louver() {
 }
 
 
-module horn(fn=30,r1=fan_diameter/2,r2=influx_diameter/2,R = fan_diameter/2)
+module horn(fn=30,r1=fan_diameter/2,r2=influx_diameter/2,R1 = fan_diameter/2,R2 = horn_height)
 {
     skin([for(f=[0:1/fn:1]) 
-        transform(rotation([0,90*f,0])*translation([-R,0,0]), 
+        transform(rotation([0,90*f,0])*translation([-1*(R1+(R2-R1)*f),0,0]), 
             circle(r1+(r2-r1)*(1-(1-f)*(1-f))))]);
-    rotate([0,90,0]) translate([-R,0,0]) cylinder(r=r2, h=influx_length);
+    rotate([0,90,0]) translate([-R2,0,0]) cylinder(r=r2, h=influx_length);
 }
 
 
