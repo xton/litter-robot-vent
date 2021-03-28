@@ -168,14 +168,6 @@ mirror([0,0,1]) union() {
     }
 }
 
-
-
-// https://stackoverflow.com/questions/28842419/linear-rotational-extrude-at-the-same-time 
-
-
-// lexan/plexi 40in x 8in
-// cut in half
-// 2 pairs of plates to join them
 inch = 25.4;
 
 window_width = 8*inch;
@@ -192,8 +184,8 @@ translate([0,0,-1*(fan_thickness+wall_thickness*2+window_offset/2)]) {
         translate([window_width/-2,window_v_offset*-1,0]) {
             square(size=[window_width, window_height/2]);
         }
-        # circle(d=fan_diameter-wall_thickness*2);
-        # each_corner(outflow_screw_spread/2){
+        circle(d=fan_diameter-wall_thickness*2);
+        each_corner(outflow_screw_spread/2){
             circle(d=fan_screw_diameter);
         }
 
