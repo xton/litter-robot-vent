@@ -178,6 +178,7 @@ window_v_offset = 100;
 
 
     
+// ! union() {
 translate([0,0,-1*(fan_thickness+wall_thickness*2+window_offset/2)]) {
     // window-bottom half
     difference() {
