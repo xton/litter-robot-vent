@@ -194,7 +194,7 @@ translate([0,0,-1*(fan_thickness+wall_thickness*2+window_offset/2)]) {
         translate([window_width/4, window_v_offset*-1 + window_height/2 - joiner_height/2]) circle(d=fan_screw_diameter);
     }
     // window top half
-    translate([0,2,0]) {
+    translate([window_width+2,window_height/-2,0]) {
         difference() {
             translate([window_width/-2,window_v_offset*-1+window_height/2,0]) {
                 square(size=[window_width, window_height/2]);
