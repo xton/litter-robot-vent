@@ -175,9 +175,9 @@ window_height = 40*inch;
 joiner_height = 4*inch;
 joiner_r = 1/2*inch;
 window_v_offset = 100;
+cut_spacing = 6;
 
 
-    
 // ! union() {
 translate([0,0,-1*(fan_thickness+wall_thickness*2+window_offset/2)]) {
     // window-bottom half
@@ -194,7 +194,7 @@ translate([0,0,-1*(fan_thickness+wall_thickness*2+window_offset/2)]) {
         translate([window_width/4, window_v_offset*-1 + window_height/2 - joiner_height/2]) circle(d=fan_screw_diameter);
     }
     // window top half
-    translate([window_width+2,window_height/-2,0]) {
+    translate([window_width+cut_spacing,window_height/-2,0]) {
         difference() {
             translate([window_width/-2,window_v_offset*-1+window_height/2,0]) {
                 square(size=[window_width, window_height/2]);
@@ -206,8 +206,8 @@ translate([0,0,-1*(fan_thickness+wall_thickness*2+window_offset/2)]) {
 
     // joiners
     rotate([0, 0, -90]) {
-        translate([window_width/2+joiner_r+2,joiner_height/-2,0]) {
-            for(off=[0:joiner_r*2+2:joiner_r*2+2]) {
+        translate([window_width/2+joiner_r+cut_spacing,joiner_height/-2,0]) {
+            for(off=[0:joiner_r*2+cut_spacing:joiner_r*2+cut_spacing]) {
                 translate([off,0,0]) {
                     // the actual joiner objects:
                     difference() {
